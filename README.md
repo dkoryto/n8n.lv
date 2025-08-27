@@ -1,4 +1,3 @@
-# n8n.lv
 # Kas ir n8n?
 
 **n8n** ir atvērtā koda darbplūsmu automatizācijas rīks, kas ļauj savienot dažādas aplikācijas un pakalpojumus bez programmēšanas zināšanām. Tas darbojas ar vizuālu mezglu sistēmu, kur katrs mezgls pārstāv konkrētu darbību vai pakalpojumu.
