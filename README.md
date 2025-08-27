@@ -46,6 +46,6 @@
 
 Ja jums ir jautājumi par n8n ieviešanu, konfigurāciju vai izmantošanu, laipni lūdzam sazināties ar mums:
 
-**E-pasts:** [n8n@n8n.lv](mailto:n8n@n8n.lv)
+**E-pasts:** [darius@n8n.lv](mailto:darius@n8n.lv)
 
 Mēs palīdzēsim jums izvēlēties piemērotāko risinājumu un sākt automatizēt jūsu biznesa procesus!
