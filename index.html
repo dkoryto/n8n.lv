@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n8n.lv - Nākotnes Automatizācija</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Futuristic Color Palette */
+            --primary-neon: #00ff88;
+            --primary-glow: rgba(0, 255, 136, 0.3);
+            --secondary-purple: #8b5cf6;
+            --secondary-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --dark-bg: #0a0a0f;
+            --darker-bg: #070710;
+            --card-bg: rgba(15, 15, 25, 0.8);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --gradient-primary: linear-gradient(135deg, var(--primary-neon) 0%, var(--secondary-cyan) 100%);
+            --gradient-secondary: linear-gradient(135deg, var(--secondary-purple) 0%, var(--accent-orange) 100%);
+            --gradient-mesh: conic-gradient(from 180deg at 50% 50%, var(--primary-neon) 0deg, var(--secondary-purple) 72deg, var(--secondary-cyan) 144deg, var(--accent-orange) 216deg, var(--primary-neon) 288deg, var(--primary-neon) 360deg);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--darker-bg);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-primary);
+            border-radius: 4px;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-orb:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: var(--gradient-primary);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bg-orb:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            background: var(--gradient-secondary);
+            top: 60%;
+            right: 20%;
+            animation-delay: 7s;
+        }
+
+        .bg-orb:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            background: var(--secondary-cyan);
+            bottom: 20%;
+            left: 30%;
+            animation-delay: 14s;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav.scrolled {
+            background: rgba(10, 10, 15, 0.95);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--primary-neon);
+            border-radius: 50%;
+            top: 50%;
+            right: -12px;
+            transform: translateY(-50%);
+            box-shadow: 0 0 10px var(--primary-glow);
+            animation: pulse 2s infinite;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 3rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-neon);
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            border-radius: 1px;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .lang-switch {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .lang-switch:hover {
+            background: var(--primary-neon);
+            color: var(--dark-bg);
+            box-shadow: 0 0 20px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 0 4rem;
+            position: relative;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content {
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--glass-bg);
+            border: 1px solid var(--border-subtle);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--primary-neon);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-mesh);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-weight: 400;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .btn {
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--dark-bg);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: var(--card-bg);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Hero Visual */
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .floating-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            transform: perspective(1000px) rotateY(-15deg);
+        }
+
+        .floating-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            animation: floatCard 6s ease-in-out infinite;
+        }
+
+        .floating-card:nth-child(1) { animation-delay: 0s; }
+        .floating-card:nth-child(2) { animation-delay: 1.5s; }
+        .floating-card:nth-child(3) { animation-delay: 3s; }
+        .floating-card:nth-child(4) { animation-delay: 4.5s; }
+
+        .floating-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--primary-neon);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--dark-bg);
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 0;
+            position: relative;
+        }
+
+        .features-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 6rem;
+        }
+
+        .section-badge {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-subtle);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--primary-neon);
+            display: inline-block;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-description {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 25px;
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-primary);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-neon);
+            box-shadow: 0 30px 60px rgba(0, 255, 136, 0.15);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-secondary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .feature-icon::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 22px;
+            padding: 2px;
+            background: var(--gradient-primary);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+        }
+
+        .feature-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .feature-description {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 6rem 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            position: relative;
+        }
+
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Technologies Section */
+        .technologies {
+            padding: 8rem 0;
+        }
+
+        .tech-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .tech-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--primary-neon);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.1);
+        }
+
+        .tech-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .tech-card:hover .tech-icon {
+            color: var(--primary-neon);
+            text-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .tech-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 10rem 0;
+            text-align: center;
+            position: relative;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+        }
+
+        .cta-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .cta-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: var(--gradient-mesh);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cta-description {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--darker-bg);
+            padding: 4rem 0 2rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 4rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .footer-tagline {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 50px;
+            height: 50px;
+            background: var(--glass-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .social-link:hover {
+            background: var(--primary-neon);
+            color: var(--dark-bg);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .footer-section h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--primary-neon);
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-subtle);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Language Content */
+        .lang-content {
+            display: none;
+        }
+
+        .lang-content.active {
+            display: block;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes floatCard {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-10px) rotate(2deg);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: translateY(-50%) scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: translateY(-50%) scale(1.2);
+            }
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 1200px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 3rem;
+            }
+
+            .floating-cards {
+                transform: none;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .hero-container {
+                padding: 0 1rem;
+            }
+
+            .floating-cards {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+
+            .tech-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">n8n.lv</a>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link" data-key="nav-home">Sākums</a></li>
+                <li><a href="#features" class="nav-link" data-key="nav-features">Risinājumi</a></li>
+                <li><a href="#technologies" class="nav-link" data-key="nav-tech">Tehnoloģijas</a></li>
+                <li><a href="#contact" class="nav-link" data-key="nav-contact">Kontakti</a></li>
+            </ul>
+            <button class="lang-switch" onclick="toggleLanguage()">EN</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-container">
+            <div class="hero-content">
+                <!-- Latvian Content -->
+                <div class="lang-content active" id="lv-hero">
+                    <div class="hero-badge">🚀 Nākotnes Automatizācija</div>
+                    <h1 class="hero-title">Revolucionāra<br>Darba Plūsma</h1>
+                    <p class="hero-subtitle">Izveidojiet, automatizējiet un skalējiet bez robežām</p>
+                    <p class="hero-description">
+                        Iepazīstieties ar n8n.lv - inovatīvu platformu, kas pārveido veidu, kā jūs domājat 
+                        par biznesa procesu automatizāciju. Mūsu progresīvā sistēma apvieno mākslīgā intelekta 
+                        spēku ar lietotājdraudzīgu dizainu.
+                    </p>
+                    <div class="cta-group">
+                        <a href="#" class="btn btn-primary">
+                            <i class="fas fa-rocket"></i>
+                            Uzsākt Journey
+                        </a>
+                        <a href="#" class="btn btn-secondary">
+                            <i class="fas fa-play"></i>
+                            Skatīt Darbībā
+                        </a>
+                    </div>
+                </div>
+
+                <!-- English Content -->
+                <div class="lang-content" id="en-hero">
+                    <div class="hero-badge">🚀 Future of Automation</div>
+                    <h1 class="hero-title">Revolutionary<br>Workflow</h1>
+                    <p class="hero-subtitle">Build, automate and scale without limits</p>
+                    <p class="hero-description">
+                        Meet n8n.lv - an innovative platform that transforms the way you think 
+                        about business process automation. Our progressive system combines the power 
+                        of artificial intelligence with user-friendly design.
+                    </p>
+                    <div class="cta-group">
+                        <a href="#" class="btn btn-primary">
+                            <i class="fas fa-rocket"></i>
+                            Start Journey
+                        </a>
+                        <a href="#" class="btn btn-secondary">
+                            <i class="fas fa-play"></i>
+                            See in Action
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="floating-cards">
+                    <div class="floating-card">
+                        <div class="card-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="card-title">AI Engine</h3>
+                        <p class="card-description">Intelligent automation</p>
+                    </div>
+                    <div class="floating-card">
+                        <div class="card-icon">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                        <h3 class="card-title">Smart Connect</h3>
+                        <p class="card-description">Seamless integrations</p>
+                    </div>
+                    <div class="floating-card">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="card-title">Analytics</h3>
+                        <p class="card-description">Real-time insights</p>
+                    </div>
+                    <div class="floating-card">
+                        <div class="card-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="card-title">Security</h3>
+                        <p class="card-description">Enterprise grade</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <div class="section-header">
+                <!-- Latvian Content -->
+                <div class="lang-content active" id="lv-features-header">
+                    <div class="section-badge">💎 Inovatīvi Risinājumi</div>
+                    <h2 class="section-title">Progresīvas Iespējas</h2>
+                    <p class="section-description">
+                        Atklājiet nākotnes tehnoloģijas, kas padara automatizāciju vienkāršu, 
+                        efektīvu un pieejamu ikvienam
+                    </p>
+                </div>
+
+                <!-- English Content -->
+                <div class="lang-content" id="en-features-header">
+                    <div class="section-badge">💎 Innovative Solutions</div>
+                    <h2 class="section-title">Progressive Features</h2>
+                    <p class="section-description">
+                        Discover future technologies that make automation simple, 
+                        efficient and accessible to everyone
+                    </p>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <!-- Latvian Features -->
+                <div class="lang-content active" id="lv-features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <h3 class="feature-title">Viedā Automatizācija</h3>
+                        <p class="feature-description">
+                            Izmantojiet mākslīgā intelekta spēku, lai izveidotu sarežģītas darba plūsmas 
+                            ar minimālu cilvēka iejaukšanos. Sistēma mācās no jūsu rīcības un optimizē procesus.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-puzzle-piece"></i>
+                        </div>
+                        <h3 class="feature-title">Bezrobežu Integrācija</h3>
+                        <p class="feature-description">
+                            Savienojiet jebkuras aplikācijas un pakalpojumus ar mūsu universālo 
+                            konektoru sistēmu. Vairāk nekā 1000+ gatavi risinājumi.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3 class="feature-title">Ātruma Optimizācija</h3>
+                        <p class="feature-description">
+                            Baudiet neticamu veiktspēju ar mūsu kvantuma iedvesmoto arhitektūru. 
+                            Procesējiet miljoniem notikumu sekundē.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3 class="feature-title">Reāllaika Monitorings</h3>
+                        <p class="feature-description">
+                            Sekojiet līdzi visiem procesiem ar mūsu progresīvo dashboard sistēmu. 
+                            Saņemiet tūlītējus brīdinājumus un analītiku.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3 class="feature-title">No-Code Revolūcija</h3>
+                        <p class="feature-description">
+                            Izveidojiet sarežģītas sistēmas bez programmēšanas zināšanām. 
+                            Mūsu vizuālais redaktors padara visu intuitīvu.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3 class="feature-title">Globāla Skalēšana</h3>
+                        <p class="feature-description">
+                            Skalējiet savu biznesu globāli ar mūsu mākoņa infrastruktūru. 
+                            Pieejams 50+ datu centros visā pasaulē.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- English Features -->
+                <div class="lang-content" id="en-features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <h3 class="feature-title">Smart Automation</h3>
+                        <p class="feature-description">
+                            Harness the power of artificial intelligence to create complex workflows 
+                            with minimal human intervention. System learns from your actions and optimizes processes.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-puzzle-piece"></i>
+                        </div>
+                        <h3 class="feature-title">Limitless Integration</h3>
+                        <p class="feature-description">
+                            Connect any applications and services with our universal 
+                            connector system. More than 1000+ ready solutions.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3 class="feature-title">Speed Optimization</h3>
+                        <p class="feature-description">
+                            Enjoy incredible performance with our quantum-inspired architecture. 
+                            Process millions of events per second.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3 class="feature-title">Real-time Monitoring</h3>
+                        <p class="feature-description">
+                            Track all processes with our progressive dashboard system. 
+                            Receive instant alerts and analytics.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3 class="feature-title">No-Code Revolution</h3>
+                        <p class="feature-description">
+                            Build complex systems without programming knowledge. 
+                            Our visual editor makes everything intuitive.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3 class="feature-title">Global Scaling</h3>
+                        <p class="feature-description">
+                            Scale your business globally with our cloud infrastructure. 
+                            Available in 50+ data centers worldwide.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-container">
+            <!-- Latvian Stats -->
+            <div class="lang-content active" id="lv-stats">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="500">0</div>
+                        <div class="stat-label">Tūkstoši Lietotāju</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="1000">0</div>
+                        <div class="stat-label">Integrācijas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="99.9">0</div>
+                        <div class="stat-label">% Uptime</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="50">0</div>
+                        <div class="stat-label">Valstis</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- English Stats -->
+            <div class="lang-content" id="en-stats">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="500">0</div>
+                        <div class="stat-label">Thousand Users</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="1000">0</div>
+                        <div class="stat-label">Integrations</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="99.9">0</div>
+                        <div class="stat-label">% Uptime</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="50">0</div>
+                        <div class="stat-label">Countries</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technologies Section -->
+    <section class="technologies" id="technologies">
+        <div class="tech-container">
+            <div class="section-header">
+                <!-- Latvian Tech Header -->
+                <div class="lang-content active" id="lv-tech-header">
+                    <div class="section-badge">⚡ Tehnoloģiju Steks</div>
+                    <h2 class="section-title">Modernas Tehnoloģijas</h2>
+                    <p class="section-description">
+                        Izveidots uz jaunākajām tehnoloģijām, lai nodrošinātu maksimālu veiktspēju un drošību
+                    </p>
+                </div>
+
+                <!-- English Tech Header -->
+                <div class="lang-content" id="en-tech-header">
+                    <div class="section-badge">⚡ Technology Stack</div>
+                    <h2 class="section-title">Modern Technologies</h2>
+                    <p class="section-description">
+                        Built on the latest technologies to ensure maximum performance and security
+                    </p>
+                </div>
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fab fa-js"></i></div>
+                    <div class="tech-name">JavaScript</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fab fa-python"></i></div>
+                    <div class="tech-name">Python</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fab fa-docker"></i></div>
+                    <div class="tech-name">Docker</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fab fa-aws"></i></div>
+                    <div class="tech-name">AWS</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fas fa-database"></i></div>
+                    <div class="tech-name">MongoDB</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fab fa-redis"></i></div>
+                    <div class="tech-name">Redis</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fab fa-github"></i></div>
+                    <div class="tech-name">GitHub</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fas fa-cloud"></i></div>
+                    <div class="tech-name">Kubernetes</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <!-- Latvian CTA -->
+            <div class="lang-content active" id="lv-cta">
+                <h2 class="cta-title">Gatavs Nākotnei?</h2>
+                <p class="cta-description">
+                    Pievienojieties tūkstošiem vīzionāru, kas jau izmanto n8n.lv, 
+                    lai revolucionāri pārveidotu savu biznesu
+                </p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i>
+                        Sākt Bezmaksas
+                    </a>
+                    <a href="#" class="btn btn-secondary">
+                        <i class="fas fa-calendar"></i>
+                        Rezervēt Demo
+                    </a>
+                </div>
+            </div>
+
+            <!-- English CTA -->
+            <div class="lang-content" id="en-cta">
+                <h2 class="cta-title">Ready for the Future?</h2>
+                <p class="cta-description">
+                    Join thousands of visionaries who are already using n8n.lv 
+                    to revolutionize their business
+                </p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i>
+                        Start Free
+                    </a>
+                    <a href="#" class="btn btn-secondary">
+                        <i class="fas fa-calendar"></i>
+                        Book Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <!-- Latvian Footer -->
+                <div class="lang-content active" id="lv-footer">
+                    <div class="footer-brand">
+                        <div class="footer-logo">n8n.lv</div>
+                        <p class="footer-tagline">
+                            Nākotnes automatizācijas platforma, kas padara sarežģīto - vienkāršu, 
+                            un neiespējamo - iespējamu.
+                        </p>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="footer-section">
+                        <h3>Produkts</h3>
+                        <ul class="footer-links">
+                            <li><a href="#" class="footer-link">Funkcijas</a></li>
+                            <li><a href="#" class="footer-link">Integrācijas</a></li>
+                            <li><a href="#" class="footer-link">Cenojums</a></li>
+                            <li><a href="#" class="footer-link">API Docs</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h3>Resursi</h3>
+                        <ul class="footer-links">
+                            <li><a href="#" class="footer-link">Dokumentācija</a></li>
+                            <li><a href="#" class="footer-link">Apmācības</a></li>
+                            <li><a href="#" class="footer-link">Kopiena</a></li>
+                            <li><a href="#" class="footer-link">Atbalsts</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h3>Uzņēmums</h3>
+                        <ul class="footer-links">
+                            <li><a href="#" class="footer-link">Par Mums</a></li>
+                            <li><a href="#" class="footer-link">Karjera</a></li>
+                            <li><a href="#" class="footer-link">Jaunumi</a></li>
+                            <li><a href="#" class="footer-link">Kontakti</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- English Footer -->
+                <div class="lang-content" id="en-footer">
+                    <div class="footer-brand">
+                        <div class="footer-logo">n8n.lv</div>
+                        <p class="footer-tagline">
+                            Future automation platform that makes complex simple, 
+                            and impossible - possible.
+                        </p>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="footer-section">
+                        <h3>Product</h3>
+                        <ul class="footer-links">
+                            <li><a href="#" class="footer-link">Features</a></li>
+                            <li><a href="#" class="footer-link">Integrations</a></li>
+                            <li><a href="#" class="footer-link">Pricing</a></li>
+                            <li><a href="#" class="footer-link">API Docs</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h3>Resources</h3>
+                        <ul class="footer-links">
+                            <li><a href="#" class="footer-link">Documentation</a></li>
+                            <li><a href="#" class="footer-link">Tutorials</a></li>
+                            <li><a href="#" class="footer-link">Community</a></li>
+                            <li><a href="#" class="footer-link">Support</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h3>Company</h3>
+                        <ul class="footer-links">
+                            <li><a href="#" class="footer-link">About</a></li>
+                            <li><a href="#" class="footer-link">Careers</a></li>
+                            <li><a href="#" class="footer-link">News</a></li>
+                            <li><a href="#" class="footer-link">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <!-- Latvian Footer Bottom -->
+                <div class="lang-content active" id="lv-footer-bottom">
+                    <p>&copy; 2025 n8n.lv. Visas tiesības aizsargātas. | 
+                        <a href="#" class="footer-link">Privātums</a> | 
+                        <a href="#" class="footer-link">Noteikumi</a> | 
+                        <a href="#" class="footer-link">Sīkdatnes</a>
+                    </p>
+                </div>
+
+                <!-- English Footer Bottom -->
+                <div class="lang-content" id="en-footer-bottom">
+                    <p>&copy; 2025 n8n.lv. All rights reserved. | 
+                        <a href="#" class="footer-link">Privacy</a> | 
+                        <a href="#" class="footer-link">Terms</a> | 
+                        <a href="#" class="footer-link">Cookies</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Language Management
+        let currentLang = 'lv';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'lv' ? 'en' : 'lv';
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            document.documentElement.lang = currentLang;
+            
+            // Hide all language content
+            document.querySelectorAll('.lang-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show content for current language
+            const contentIds = [
+                `${currentLang}-hero`,
+                `${currentLang}-features-header`,
+                `${currentLang}-features-grid`, 
+                `${currentLang}-stats`,
+                `${currentLang}-tech-header`,
+                `${currentLang}-cta`,
+                `${currentLang}-footer`,
+                `${currentLang}-footer-bottom`
+            ];
+
+            contentIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.classList.add('active');
+            });
+
+            // Update button text and navigation
+            updateNavigation();
+            updateTitle();
+        }
+
+        function updateNavigation() {
+            const langButton = document.querySelector('.lang-switch');
+            langButton.textContent = currentLang === 'lv' ? 'EN' : 'LV';
+
+            const navTranslations = {
+                'lv': {
+                    'nav-home': 'Sākums',
+                    'nav-features': 'Risinājumi', 
+                    'nav-tech': 'Tehnoloģijas',
+                    'nav-contact': 'Kontakti'
+                },
+                'en': {
+                    'nav-home': 'Home',
+                    'nav-features': 'Solutions',
+                    'nav-tech': 'Technologies', 
+                    'nav-contact': 'Contact'
+                }
+            };
+
+            Object.entries(navTranslations[currentLang]).forEach(([key, value]) => {
+                const element = document.querySelector(`[data-key="${key}"]`);
+                if (element) element.textContent = value;
+            });
+        }
+
+        function updateTitle() {
+            const titles = {
+                'lv': 'n8n.lv - Nākotnes Automatizācija',
+                'en': 'n8n.lv - Future Automation'
+            };
+            document.title = titles[currentLang];
+        }
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Stats Animation
+        function animateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            
+            statNumbers.forEach(stat => {
+                const target = parseFloat(stat.dataset.target);
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    
+                    if (target >= 100) {
+                        stat.textContent = Math.floor(current);
+                    } else {
+                        stat.textContent = current.toFixed(1);
+                    }
+                }, 16);
+            });
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.3,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('stats')) {
+                        animateStats();
+                        observer.unobserve(entry.target);
+                    }
+                    
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.feature-card, .stats, .tech-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Navbar scroll effect
+        let lastScrollY = 0;
+        const navbar = document.getElementById('navbar');
+
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            
+            // Add scrolled class for styling
+            if (currentScrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            // Auto-hide navbar on scroll down
+            if (currentScrollY > lastScrollY && currentScrollY > 200) {
+                navbar.style.transform = 'translateY(-100%)';
+            } else {
+                navbar.style.transform = 'translateY(0)';
+            }
+
+            lastScrollY = currentScrollY;
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLanguage();
+        });
+
+        // Parallax effect for background orbs
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const orbs = document.querySelectorAll('.bg-orb');
+            
+            orbs.forEach((orb, index) => {
+                const speed = 0.5 + (index * 0.1);
+                orb.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+
+        // Add hover effects to cards
+        document.querySelectorAll('.floating-card, .feature-card, .tech-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = this.style.transform.replace('scale(1)', 'scale(1.02)');
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = this.style.transform.replace('scale(1.02)', 'scale(1)');
+            });
+        });
+    </script>
+</body>
+</html>
