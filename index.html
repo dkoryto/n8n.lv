@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>n8n.lv - Nākotnes Automatizācija</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <meta name="description" content="n8n.lv - Profesionāli n8n automatizācijas risinājumi. Serveru ieviešana, pārvaldīšana un pielāgotu automatizāciju izveide jūsu biznesam.">
+    <meta name="keywords" content="n8n, automatizācija, serveru ieviešana, darba plūsma, integrācija, no-code, serveru pārvaldīšana">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -41,6 +45,39 @@
             line-height: 1.6;
         }
 
+        /* Loading Spinner */
+        .loading-spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            background: var(--dark-bg);
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            border-top: 3px solid var(--primary-neon);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            color: var(--primary-neon);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -71,6 +108,7 @@
             border-radius: 50%;
             filter: blur(40px);
             animation: float 20s infinite ease-in-out;
+            will-change: transform;
         }
 
         .bg-orb:nth-child(1) {
@@ -190,6 +228,79 @@
             width: 100%;
         }
 
+        /* Mobile Navigation */
+        .mobile-nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1001;
+        }
+
+        .hamburger {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-neon);
+            margin: 3px 0;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .mobile-nav-toggle.active .hamburger:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .mobile-nav-toggle.active .hamburger:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-nav-toggle.active .hamburger:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100vh;
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            transition: right 0.3s ease;
+            z-index: 999;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 2rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-link:hover {
+            color: var(--primary-neon);
+            text-shadow: 0 0 20px var(--primary-glow);
+            transform: scale(1.1);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
         .lang-switch {
             background: var(--glass-bg);
             border: 1px solid var(--border-subtle);
@@ -245,6 +356,7 @@
             margin-bottom: 2rem;
             backdrop-filter: blur(10px);
             font-family: 'JetBrains Mono', monospace;
+            animation: fadeInUp 1s ease;
         }
 
         .hero-title {
@@ -256,7 +368,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: fadeInUp 1s ease;
+            animation: fadeInUp 1s ease 0.2s both;
         }
 
         .hero-subtitle {
@@ -264,7 +376,7 @@
             color: var(--text-secondary);
             margin-bottom: 2rem;
             font-weight: 400;
-            animation: fadeInUp 1s ease 0.2s both;
+            animation: fadeInUp 1s ease 0.4s both;
         }
 
         .hero-description {
@@ -272,7 +384,7 @@
             color: var(--text-muted);
             line-height: 1.8;
             margin-bottom: 3rem;
-            animation: fadeInUp 1s ease 0.4s both;
+            animation: fadeInUp 1s ease 0.6s both;
         }
 
         .cta-group {
@@ -280,7 +392,7 @@
             gap: 1.5rem;
             align-items: center;
             flex-wrap: wrap;
-            animation: fadeInUp 1s ease 0.6s both;
+            animation: fadeInUp 1s ease 0.8s both;
         }
 
         .btn {
@@ -329,6 +441,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            animation: fadeInUp 1s ease 1s both;
         }
 
         .floating-cards {
@@ -346,6 +459,7 @@
             backdrop-filter: blur(20px);
             transition: all 0.3s ease;
             animation: floatCard 6s ease-in-out infinite;
+            cursor: pointer;
         }
 
         .floating-card:nth-child(1) { animation-delay: 0s; }
@@ -448,6 +562,7 @@
             transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .feature-card::before {
@@ -504,100 +619,180 @@
             line-height: 1.7;
         }
 
-        /* Stats Section */
-        .stats {
-            padding: 6rem 0;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border-subtle);
-            border-bottom: 1px solid var(--border-subtle);
-        }
 
-        .stats-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 3rem;
-            text-align: center;
-        }
 
-        .stat-item {
-            position: relative;
-        }
 
-        .stat-number {
-            font-size: 4rem;
-            font-weight: 700;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .stat-label {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        /* Technologies Section */
-        .technologies {
+        /* Services Section */
+        .services {
             padding: 8rem 0;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 50%, var(--darker-bg) 100%);
         }
 
-        .tech-container {
+        .services-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 2rem;
         }
 
-        .tech-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 2rem;
-            margin-top: 4rem;
+        .n8n-info {
+            margin: 4rem 0 6rem;
         }
 
-        .tech-card {
+        .info-card {
             background: var(--card-bg);
             border: 1px solid var(--border-subtle);
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
+            border-radius: 25px;
+            padding: 3rem;
             backdrop-filter: blur(20px);
-            transition: all 0.3s ease;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .info-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--dark-bg);
+            margin: 0 auto 2rem;
+        }
+
+        .info-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .info-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .use-cases {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .use-cases h4 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-neon);
+            margin-bottom: 1.5rem;
+        }
+
+        .use-cases ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .use-cases li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .use-cases li:last-child {
+            border-bottom: none;
+        }
+
+        .use-cases li strong {
+            color: var(--primary-neon);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .service-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 25px;
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
             cursor: pointer;
         }
 
-        .tech-card:hover {
-            transform: translateY(-5px) scale(1.02);
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-secondary);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
             border-color: var(--primary-neon);
-            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.1);
+            box-shadow: 0 30px 60px rgba(0, 255, 136, 0.15);
         }
 
-        .tech-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
-        }
-
-        .tech-card:hover .tech-icon {
-            color: var(--primary-neon);
-            text-shadow: 0 0 20px var(--primary-glow);
-        }
-
-        .tech-name {
-            font-size: 1rem;
-            font-weight: 600;
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-secondary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
             color: var(--text-primary);
+            margin-bottom: 2rem;
+        }
+
+        .service-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .service-description {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .service-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .service-features li {
+            padding: 0.8rem 0;
+            color: var(--text-secondary);
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .service-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-neon);
+            font-weight: bold;
+            font-size: 1.2rem;
         }
 
         /* CTA Section */
@@ -638,6 +833,36 @@
             flex-wrap: wrap;
         }
 
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 50%;
+            color: var(--dark-bg);
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.4);
+        }
+
         /* Footer */
         .footer {
             background: var(--darker-bg);
@@ -652,9 +877,8 @@
         }
 
         .footer-content {
-            display: grid;
-            grid-template-columns: 2fr repeat(3, 1fr);
-            gap: 4rem;
+            display: flex;
+            justify-content: center;
             margin-bottom: 3rem;
         }
 
@@ -706,21 +930,6 @@
             box-shadow: 0 10px 30px var(--primary-glow);
         }
 
-        .footer-section h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 0.8rem;
-        }
-
         .footer-link {
             color: var(--text-muted);
             text-decoration: none;
@@ -746,6 +955,44 @@
 
         .lang-content.active {
             display: block;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            background: var(--card-bg);
+            border: 1px solid var(--primary-neon);
+            border-radius: 15px;
+            padding: 1.5rem;
+            color: var(--text-primary);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .notification-close:hover {
+            color: var(--primary-neon);
         }
 
         /* Animations */
@@ -789,6 +1036,11 @@
             }
         }
 
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* Mobile Responsiveness */
         @media (max-width: 1200px) {
             .hero-container {
@@ -809,6 +1061,10 @@
                 display: none;
             }
 
+            .mobile-nav-toggle {
+                display: flex;
+            }
+
             .hero-container {
                 padding: 0 1rem;
             }
@@ -823,18 +1079,24 @@
                 gap: 2rem;
             }
 
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 2rem;
-            }
-
-            .tech-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .footer-content {
+            .services-grid {
                 grid-template-columns: 1fr;
                 gap: 2rem;
+            }
+
+            .info-card {
+                padding: 2rem;
+            }
+
+            .service-card {
+                padding: 2rem;
+            }
+
+
+
+
+
+            .footer-content {
                 text-align: center;
             }
 
@@ -842,20 +1104,64 @@
                 flex-direction: column;
                 align-items: center;
             }
+
+            .notification {
+                right: 20px;
+                left: 20px;
+                max-width: none;
+            }
         }
 
         @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
+
+
+
+
+            .hero-title {
+                font-size: 2.5rem;
             }
 
-            .tech-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .section-title {
+                font-size: 2rem;
             }
+        }
+
+        /* Performance optimizations */
+        .floating-card,
+        .feature-card,
+        .tech-card,
+        .bg-orb {
+            will-change: transform;
+        }
+
+        /* Accessibility improvements */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        .btn:focus,
+        .nav-link:focus,
+        .lang-switch:focus,
+        .mobile-nav-toggle:focus {
+            outline: 2px solid var(--primary-neon);
+            outline-offset: 2px;
         }
     </style>
 </head>
 <body>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <div class="loading-text">Ielādē n8n.lv...</div>
+    </div>
+
     <!-- Animated Background -->
     <div class="animated-bg">
         <div class="bg-orb"></div>
@@ -866,16 +1172,31 @@
     <!-- Navigation -->
     <nav class="nav" id="navbar">
         <div class="nav-container">
-            <a href="#" class="logo">n8n.lv</a>
+            <a href="#" class="logo" aria-label="n8n.lv mājas lapa">n8n.lv</a>
             <ul class="nav-menu">
                 <li><a href="#home" class="nav-link" data-key="nav-home">Sākums</a></li>
                 <li><a href="#features" class="nav-link" data-key="nav-features">Risinājumi</a></li>
-                <li><a href="#technologies" class="nav-link" data-key="nav-tech">Tehnoloģijas</a></li>
+                <li><a href="#services" class="nav-link" data-key="nav-services">Pakalpojumi</a></li>
                 <li><a href="mailto:darius@n8n.lv" class="nav-link" data-key="nav-contact">Kontakti</a></li>
             </ul>
-            <button class="lang-switch" onclick="toggleLanguage()">EN</button>
+            <div class="nav-actions">
+                <button class="lang-switch" onclick="toggleLanguage()" aria-label="Mainīt valodu">EN</button>
+                <div class="mobile-nav-toggle" onclick="toggleMobileNav()" aria-label="Mobilā izvēlne">
+                    <div class="hamburger"></div>
+                    <div class="hamburger"></div>
+                    <div class="hamburger"></div>
+                </div>
+            </div>
         </div>
     </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <a href="#home" class="mobile-nav-link" data-key="nav-home" onclick="closeMobileNav()">Sākums</a>
+        <a href="#features" class="mobile-nav-link" data-key="nav-features" onclick="closeMobileNav()">Risinājumi</a>
+        <a href="#services" class="mobile-nav-link" data-key="nav-services" onclick="closeMobileNav()">Pakalpojumi</a>
+        <a href="mailto:darius@n8n.lv" class="mobile-nav-link" data-key="nav-contact" onclick="closeMobileNav()">Kontakti</a>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero" id="home">
@@ -887,16 +1208,17 @@
                     <h1 class="hero-title">Revolucionāra<br>Darba Plūsma</h1>
                     <p class="hero-subtitle">Izveidojiet, automatizējiet un skalējiet bez robežām</p>
                     <p class="hero-description">
-                        Iepazīstieties ar n8n.lv - inovatīvu platformu, kas pārveido veidu, kā jūs domājat 
-                        par biznesa procesu automatizāciju. Mūsu progresīvā sistēma apvieno mākslīgā intelekta 
-                        spēku ar lietotājdraudzīgu dizainu.
+                        <strong>n8n</strong> ir atvērtā koda no-code/low-code automatizācijas platforma, kas ļauj savienot 
+                        dažādas aplikācijas un pakalpojumus bez programmēšanas zināšanām. Mēs specializējamies 
+                        <strong>n8n serveru ieviešanā</strong>, <strong>pārvaldīšanā</strong> un 
+                        <strong>pielāgotu automatizāciju izveidē</strong> jūsu biznesam.
                     </p>
                     <div class="cta-group">
-                        <a href="#" class="btn btn-primary">
+                        <a href="#features" class="btn btn-primary">
                             <i class="fas fa-rocket"></i>
                             Uzsākt Journey
                         </a>
-                        <a href="#" class="btn btn-secondary">
+                        <a href="#" class="btn btn-secondary" onclick="showNotification('Demo funkcija tiks pievienota drīzumā!')">
                             <i class="fas fa-play"></i>
                             Skatīt Darbībā
                         </a>
@@ -909,16 +1231,17 @@
                     <h1 class="hero-title">Revolutionary<br>Workflow</h1>
                     <p class="hero-subtitle">Build, automate and scale without limits</p>
                     <p class="hero-description">
-                        Meet n8n.lv - an innovative platform that transforms the way you think 
-                        about business process automation. Our progressive system combines the power 
-                        of artificial intelligence with user-friendly design.
+                        <strong>n8n</strong> is an open-source no-code/low-code automation platform that allows you to 
+                        connect various applications and services without programming knowledge. We specialize 
+                        in <strong>n8n server implementation</strong>, <strong>management</strong> and 
+                        <strong>creating custom automations</strong> for your business.
                     </p>
                     <div class="cta-group">
-                        <a href="#" class="btn btn-primary">
+                        <a href="#features" class="btn btn-primary">
                             <i class="fas fa-rocket"></i>
                             Start Journey
                         </a>
-                        <a href="#" class="btn btn-secondary">
+                        <a href="#" class="btn btn-secondary" onclick="showNotification('Demo feature coming soon!')">
                             <i class="fas fa-play"></i>
                             See in Action
                         </a>
@@ -928,28 +1251,28 @@
 
             <div class="hero-visual">
                 <div class="floating-cards">
-                    <div class="floating-card">
+                    <div class="floating-card" onclick="showNotification('AI Engine: Intelligent automation powered by machine learning')">
                         <div class="card-icon">
                             <i class="fas fa-brain"></i>
                         </div>
                         <h3 class="card-title">AI Engine</h3>
                         <p class="card-description">Intelligent automation</p>
                     </div>
-                    <div class="floating-card">
+                    <div class="floating-card" onclick="showNotification('Smart Connect: Seamless integrations with 1000+ services')">
                         <div class="card-icon">
                             <i class="fas fa-network-wired"></i>
                         </div>
                         <h3 class="card-title">Smart Connect</h3>
                         <p class="card-description">Seamless integrations</p>
                     </div>
-                    <div class="floating-card">
+                    <div class="floating-card" onclick="showNotification('Analytics: Real-time insights and performance monitoring')">
                         <div class="card-icon">
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <h3 class="card-title">Analytics</h3>
                         <p class="card-description">Real-time insights</p>
                     </div>
-                    <div class="floating-card">
+                    <div class="floating-card" onclick="showNotification('Security: Enterprise-grade security with end-to-end encryption')">
                         <div class="card-icon">
                             <i class="fas fa-shield-alt"></i>
                         </div>
@@ -1128,110 +1451,195 @@
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="stats">
-        <div class="stats-container">
-            <!-- Latvian Stats -->
-            <div class="lang-content active" id="lv-stats">
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-number" data-target="500">0</div>
-                        <div class="stat-label">Tūkstoši Lietotāju</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" data-target="1000">0</div>
-                        <div class="stat-label">Integrācijas</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" data-target="99.9">0</div>
-                        <div class="stat-label">% Uptime</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" data-target="50">0</div>
-                        <div class="stat-label">Valstis</div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- English Stats -->
-            <div class="lang-content" id="en-stats">
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-number" data-target="500">0</div>
-                        <div class="stat-label">Thousand Users</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" data-target="1000">0</div>
-                        <div class="stat-label">Integrations</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" data-target="99.9">0</div>
-                        <div class="stat-label">% Uptime</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" data-target="50">0</div>
-                        <div class="stat-label">Countries</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Technologies Section -->
-    <section class="technologies" id="technologies">
-        <div class="tech-container">
+
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="services-container">
             <div class="section-header">
-                <!-- Latvian Tech Header -->
-                <div class="lang-content active" id="lv-tech-header">
-                    <div class="section-badge">⚡ Tehnoloģiju Steks</div>
-                    <h2 class="section-title">Modernas Tehnoloģijas</h2>
+                <!-- Latvian Services Header -->
+                <div class="lang-content active" id="lv-services-header">
+                    <div class="section-badge">🛠️ Mūsu Pakalpojumi</div>
+                    <h2 class="section-title">n8n Ekspertīze</h2>
                     <p class="section-description">
-                        Izveidots uz jaunākajām tehnoloģijām, lai nodrošinātu maksimālu veiktspēju un drošību
+                        Profesionāli n8n risinājumi jūsu biznesa vajadzībām - no serveru ieviešanas līdz sarežģītu automatizāciju izveidei
                     </p>
                 </div>
 
-                <!-- English Tech Header -->
-                <div class="lang-content" id="en-tech-header">
-                    <div class="section-badge">⚡ Technology Stack</div>
-                    <h2 class="section-title">Modern Technologies</h2>
+                <!-- English Services Header -->
+                <div class="lang-content" id="en-services-header">
+                    <div class="section-badge">🛠️ Our Services</div>
+                    <h2 class="section-title">n8n Expertise</h2>
                     <p class="section-description">
-                        Built on the latest technologies to ensure maximum performance and security
+                        Professional n8n solutions for your business needs - from server implementation to complex automation creation
                     </p>
                 </div>
             </div>
 
-            <div class="tech-grid">
-                <div class="tech-card">
-                    <div class="tech-icon"><i class="fab fa-js"></i></div>
-                    <div class="tech-name">JavaScript</div>
+            <!-- What is n8n Section -->
+            <div class="n8n-info">
+                <!-- Latvian n8n Info -->
+                <div class="lang-content active" id="lv-n8n-info">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <h3 class="info-title">Kas ir n8n?</h3>
+                        <p class="info-description">
+                            <strong>n8n</strong> ir bezmaksas, atvērtā koda automatizācijas rīks, kas ļauj izveidot sarežģītas darba plūsmas, 
+                            savienojot dažādas aplikācijas un pakalpojumus. Tas darbojas kā "digitālais līdzeklis", kas automātiski 
+                            veic uzdevumus starp dažādām sistēmām bez manuālas iejaukšanās.
+                        </p>
+                        <div class="use-cases">
+                            <h4>Galvenie lietošanas gadījumi:</h4>
+                            <ul>
+                                <li><strong>E-pasta mārketings:</strong> Automatizējiet e-pasta kampaņas un segmentāciju</li>
+                                <li><strong>Datu sinhronizācija:</strong> Sinhronizējiet datus starp CRM, e-komercijas un grāmatvedības sistēmām</li>
+                                <li><strong>Sociālo mediju pārvaldība:</strong> Automatizējiet publicēšanu un monitoringu</li>
+                                <li><strong>Klientu apkalpošana:</strong> Automatizējiet biļešu izveidi un atbildes</li>
+                                <li><strong>Finanšu ziņojumi:</strong> Automatizējiet finanšu datu apkopošanu un atskaišu izveidi</li>
+                                <li><strong>HR procesi:</strong> Automatizējiet darbinieku onboarding un dokumentu pārvaldību</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="tech-card">
-                    <div class="tech-icon"><i class="fab fa-python"></i></div>
-                    <div class="tech-name">Python</div>
+
+                <!-- English n8n Info -->
+                <div class="lang-content" id="en-n8n-info">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <h3 class="info-title">What is n8n?</h3>
+                        <p class="info-description">
+                            <strong>n8n</strong> is a free, open-source automation tool that allows you to create complex workflows 
+                            by connecting various applications and services. It works as a "digital assistant" that automatically 
+                            performs tasks between different systems without manual intervention.
+                        </p>
+                        <div class="use-cases">
+                            <h4>Main use cases:</h4>
+                            <ul>
+                                <li><strong>Email Marketing:</strong> Automate email campaigns and segmentation</li>
+                                <li><strong>Data Synchronization:</strong> Sync data between CRM, e-commerce, and accounting systems</li>
+                                <li><strong>Social Media Management:</strong> Automate posting and monitoring</li>
+                                <li><strong>Customer Service:</strong> Automate ticket creation and responses</li>
+                                <li><strong>Financial Reporting:</strong> Automate financial data collection and report generation</li>
+                                <li><strong>HR Processes:</strong> Automate employee onboarding and document management</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="tech-card">
-                    <div class="tech-icon"><i class="fab fa-docker"></i></div>
-                    <div class="tech-name">Docker</div>
+            </div>
+
+            <div class="services-grid">
+                <!-- Latvian Services -->
+                <div class="lang-content active" id="lv-services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h3 class="service-title">Serveru Ieviešana</h3>
+                        <p class="service-description">
+                            Pilnīga n8n serveru ieviešana jūsu infrastruktūrā. Mēs nodrošinām profesionālu uzstādīšanu, 
+                            konfigurāciju un optimizāciju maksimālai veiktspējai un drošībai.
+                        </p>
+                        <ul class="service-features">
+                            <li>Servera uzstādīšana un konfigurācija</li>
+                            <li>SSL sertifikātu ieviešana</li>
+                            <li>Dublēšanas sistēmas izveidošana</li>
+                            <li>Veiktspējas optimizācija</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3 class="service-title">Serveru Pārvaldīšana</h3>
+                        <p class="service-description">
+                            Pilns n8n serveru pārvaldīšanas pakalpojums. Nodrošinām nepārtrauktu darbību, 
+                            regulārus atjauninājumus un tehnisko atbalstu 24/7 režīmā.
+                        </p>
+                        <ul class="service-features">
+                            <li>24/7 monitorings un atbalsts</li>
+                            <li>Regulāri atjauninājumi</li>
+                            <li>Drošības auditi</li>
+                            <li>Veiktspējas analīze</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <h3 class="service-title">Automatizāciju Izveide</h3>
+                        <p class="service-description">
+                            Pielāgotu n8n automatizāciju risinājumu izstrāde jūsu specifiskajām biznesa vajadzībām. 
+                            No vienkāršām integrācijām līdz sarežģītām darba plūsmām.
+                        </p>
+                        <ul class="service-features">
+                            <li>Biznesa procesu analīze</li>
+                            <li>Pielāgotu workflow izveide</li>
+                            <li>API integrācijas</li>
+                            <li>Testēšana un dokumentācija</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="tech-card">
-                    <div class="tech-icon"><i class="fab fa-aws"></i></div>
-                    <div class="tech-name">AWS</div>
-                </div>
-                <div class="tech-card">
-                    <div class="tech-icon"><i class="fas fa-database"></i></div>
-                    <div class="tech-name">MongoDB</div>
-                </div>
-                <div class="tech-card">
-                    <div class="tech-icon"><i class="fab fa-redis"></i></div>
-                    <div class="tech-name">Redis</div>
-                </div>
-                <div class="tech-card">
-                    <div class="tech-icon"><i class="fab fa-github"></i></div>
-                    <div class="tech-name">GitHub</div>
-                </div>
-                <div class="tech-card">
-                    <div class="tech-icon"><i class="fas fa-cloud"></i></div>
-                    <div class="tech-name">Kubernetes</div>
+
+                <!-- English Services -->
+                <div class="lang-content" id="en-services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h3 class="service-title">Server Implementation</h3>
+                        <p class="service-description">
+                            Complete n8n server implementation in your infrastructure. We provide professional 
+                            installation, configuration, and optimization for maximum performance and security.
+                        </p>
+                        <ul class="service-features">
+                            <li>Server installation and configuration</li>
+                            <li>SSL certificate implementation</li>
+                            <li>Backup system creation</li>
+                            <li>Performance optimization</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3 class="service-title">Server Management</h3>
+                        <p class="service-description">
+                            Complete n8n server management service. We ensure continuous operation, 
+                            regular updates, and 24/7 technical support.
+                        </p>
+                        <ul class="service-features">
+                            <li>24/7 monitoring and support</li>
+                            <li>Regular updates</li>
+                            <li>Security audits</li>
+                            <li>Performance analysis</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <h3 class="service-title">Automation Creation</h3>
+                        <p class="service-description">
+                            Custom n8n automation solution development for your specific business needs. 
+                            From simple integrations to complex workflows.
+                        </p>
+                        <ul class="service-features">
+                            <li>Business process analysis</li>
+                            <li>Custom workflow creation</li>
+                            <li>API integrations</li>
+                            <li>Testing and documentation</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1248,11 +1656,11 @@
                     lai revolucionāri pārveidotu savu biznesu
                 </p>
                 <div class="cta-buttons">
-                    <a href="#" class="btn btn-primary">
+                    <a href="mailto:darius@n8n.lv?subject=Bezmaksas%20n8n.lv%20reģistrācija" class="btn btn-primary">
                         <i class="fas fa-rocket"></i>
                         Sākt Bezmaksas
                     </a>
-                    <a href="#" class="btn btn-secondary">
+                    <a href="mailto:darius@n8n.lv?subject=n8n.lv%20Demo%20pieprasījums" class="btn btn-secondary">
                         <i class="fas fa-calendar"></i>
                         Rezervēt Demo
                     </a>
@@ -1267,11 +1675,11 @@
                     to revolutionize their business
                 </p>
                 <div class="cta-buttons">
-                    <a href="#" class="btn btn-primary">
+                    <a href="mailto:darius@n8n.lv?subject=Free%20n8n.lv%20registration" class="btn btn-primary">
                         <i class="fas fa-rocket"></i>
                         Start Free
                     </a>
-                    <a href="#" class="btn btn-secondary">
+                    <a href="mailto:darius@n8n.lv?subject=n8n.lv%20Demo%20request" class="btn btn-secondary">
                         <i class="fas fa-calendar"></i>
                         Book Demo
                     </a>
@@ -1293,43 +1701,15 @@
                             un neiespējamo - iespējamu.
                         </p>
                         <div class="social-links">
-                            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                            <a href="https://github.com" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                            <a href="https://twitter.com" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="https://discord.com" class="social-link" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                            <a href="https://youtube.com" class="social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                            <a href="https://linkedin.com" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
                         </div>
                     </div>
 
-                    <div class="footer-section">
-                        <h3>Produkts</h3>
-                        <ul class="footer-links">
-                            <li><a href="#" class="footer-link">Funkcijas</a></li>
-                            <li><a href="#" class="footer-link">Integrācijas</a></li>
-                            <li><a href="#" class="footer-link">Cenojums</a></li>
-                            <li><a href="#" class="footer-link">API Docs</a></li>
-                        </ul>
-                    </div>
 
-                    <div class="footer-section">
-                        <h3>Resursi</h3>
-                        <ul class="footer-links">
-                            <li><a href="#" class="footer-link">Dokumentācija</a></li>
-                            <li><a href="#" class="footer-link">Apmācības</a></li>
-                            <li><a href="#" class="footer-link">Kopiena</a></li>
-                            <li><a href="#" class="footer-link">Atbalsts</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="footer-section">
-                        <h3>Uzņēmums</h3>
-                        <ul class="footer-links">
-                            <li><a href="#" class="footer-link">Par Mums</a></li>
-                            <li><a href="#" class="footer-link">Karjera</a></li>
-                            <li><a href="#" class="footer-link">Jaunumi</a></li>
-                            <li><a href="#" class="footer-link">Kontakti</a></li>
-                        </ul>
-                    </div>
                 </div>
 
                 <!-- English Footer -->
@@ -1341,43 +1721,15 @@
                             and impossible - possible.
                         </p>
                         <div class="social-links">
-                            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                            <a href="https://github.com" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                            <a href="https://twitter.com" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="https://discord.com" class="social-link" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                            <a href="https://youtube.com" class="social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                            <a href="https://linkedin.com" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
                         </div>
                     </div>
 
-                    <div class="footer-section">
-                        <h3>Product</h3>
-                        <ul class="footer-links">
-                            <li><a href="#" class="footer-link">Features</a></li>
-                            <li><a href="#" class="footer-link">Integrations</a></li>
-                            <li><a href="#" class="footer-link">Pricing</a></li>
-                            <li><a href="#" class="footer-link">API Docs</a></li>
-                        </ul>
-                    </div>
 
-                    <div class="footer-section">
-                        <h3>Resources</h3>
-                        <ul class="footer-links">
-                            <li><a href="#" class="footer-link">Documentation</a></li>
-                            <li><a href="#" class="footer-link">Tutorials</a></li>
-                            <li><a href="#" class="footer-link">Community</a></li>
-                            <li><a href="#" class="footer-link">Support</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="footer-section">
-                        <h3>Company</h3>
-                        <ul class="footer-links">
-                            <li><a href="#" class="footer-link">About</a></li>
-                            <li><a href="#" class="footer-link">Careers</a></li>
-                            <li><a href="#" class="footer-link">News</a></li>
-                            <li><a href="#" class="footer-link">Contact</a></li>
-                        </ul>
-                    </div>
                 </div>
             </div>
 
@@ -1385,25 +1737,39 @@
                 <!-- Latvian Footer Bottom -->
                 <div class="lang-content active" id="lv-footer-bottom">
                     <p>&copy; 2025 n8n.lv. Visas tiesības aizsargātas. | 
-                        <a href="#" class="footer-link">Privātums</a> | 
-                        <a href="#" class="footer-link">Noteikumi</a> | 
-                        <a href="#" class="footer-link">Sīkdatnes</a>
+                        <a href="mailto:darius@n8n.lv?subject=Privātuma%20politika" class="footer-link">Privātums</a> | 
+                        <a href="mailto:darius@n8n.lv?subject=Noteikumi" class="footer-link">Noteikumi</a> | 
+                        <a href="mailto:darius@n8n.lv?subject=Sīkdatņu%20politika" class="footer-link">Sīkdatnes</a>
                     </p>
                 </div>
 
                 <!-- English Footer Bottom -->
                 <div class="lang-content" id="en-footer-bottom">
                     <p>&copy; 2025 n8n.lv. All rights reserved. | 
-                        <a href="#" class="footer-link">Privacy</a> | 
-                        <a href="#" class="footer-link">Terms</a> | 
-                        <a href="#" class="footer-link">Cookies</a>
+                        <a href="mailto:darius@n8n.lv?subject=Privacy%20policy" class="footer-link">Privacy</a> | 
+                        <a href="mailto:darius@n8n.lv?subject=Terms" class="footer-link">Terms</a> | 
+                        <a href="mailto:darius@n8n.lv?subject=Cookie%20policy" class="footer-link">Cookies</a>
                     </p>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()" aria-label="Atgriezties augšā">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <button class="notification-close" onclick="hideNotification()">&times;</button>
+        <div class="notification-content"></div>
+    </div>
+
     <script>
+        // Performance monitoring
+        let performanceStart = Date.now();
+
         // Language Management
         let currentLang = 'lv';
 
@@ -1424,9 +1790,10 @@
             const contentIds = [
                 `${currentLang}-hero`,
                 `${currentLang}-features-header`,
-                `${currentLang}-features-grid`, 
-                `${currentLang}-stats`,
-                `${currentLang}-tech-header`,
+                `${currentLang}-features-grid`,
+                `${currentLang}-services-header`,
+                `${currentLang}-n8n-info`,
+                `${currentLang}-services-grid`, 
                 `${currentLang}-cta`,
                 `${currentLang}-footer`,
                 `${currentLang}-footer-bottom`
@@ -1449,21 +1816,23 @@
             const navTranslations = {
                 'lv': {
                     'nav-home': 'Sākums',
-                    'nav-features': 'Risinājumi', 
-                    'nav-tech': 'Tehnoloģijas',
+                    'nav-features': 'Risinājumi',
+                    'nav-services': 'Pakalpojumi',
                     'nav-contact': 'Kontakti'
                 },
                 'en': {
                     'nav-home': 'Home',
                     'nav-features': 'Solutions',
-                    'nav-tech': 'Technologies', 
+                    'nav-services': 'Services',
                     'nav-contact': 'Contact'
                 }
             };
 
             Object.entries(navTranslations[currentLang]).forEach(([key, value]) => {
-                const element = document.querySelector(`[data-key="${key}"]`);
-                if (element) element.textContent = value;
+                const elements = document.querySelectorAll(`[data-key="${key}"]`);
+                elements.forEach(element => {
+                    if (element) element.textContent = value;
+                });
             });
         }
 
@@ -1475,12 +1844,53 @@
             document.title = titles[currentLang];
         }
 
+        // Mobile Navigation
+        function toggleMobileNav() {
+            const toggle = document.querySelector('.mobile-nav-toggle');
+            const mobileNav = document.getElementById('mobileNav');
+            
+            toggle.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+            
+            // Prevent scrolling when menu is open
+            document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+        }
+
+        function closeMobileNav() {
+            const toggle = document.querySelector('.mobile-nav-toggle');
+            const mobileNav = document.getElementById('mobileNav');
+            
+            toggle.classList.remove('active');
+            mobileNav.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Notification System
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const content = notification.querySelector('.notification-content');
+            
+            content.textContent = message;
+            notification.classList.add('show');
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                hideNotification();
+            }, 5000);
+        }
+
+        function hideNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.remove('show');
+        }
+
         // Smooth Scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
+                    closeMobileNav(); // Close mobile nav if open
                     target.scrollIntoView({
                         behavior: 'smooth',
                         block: 'start'
@@ -1489,31 +1899,15 @@
             });
         });
 
-        // Stats Animation
-        function animateStats() {
-            const statNumbers = document.querySelectorAll('.stat-number');
-            
-            statNumbers.forEach(stat => {
-                const target = parseFloat(stat.dataset.target);
-                const duration = 2000;
-                const increment = target / (duration / 16);
-                let current = 0;
-
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        current = target;
-                        clearInterval(timer);
-                    }
-                    
-                    if (target >= 100) {
-                        stat.textContent = Math.floor(current);
-                    } else {
-                        stat.textContent = current.toFixed(1);
-                    }
-                }, 16);
+        // Back to Top Button
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         }
+
+
 
         // Intersection Observer for animations
         const observerOptions = {
@@ -1524,11 +1918,6 @@
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    if (entry.target.classList.contains('stats')) {
-                        animateStats();
-                        observer.unobserve(entry.target);
-                    }
-                    
                     entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
                 }
@@ -1536,44 +1925,54 @@
         }, observerOptions);
 
         // Observe elements for animation
-        document.querySelectorAll('.feature-card, .stats, .tech-card').forEach(el => {
+        document.querySelectorAll('.feature-card, .service-card, .info-card').forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(30px)';
             el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(el);
         });
 
-        // Navbar scroll effect
+        // Navbar scroll effect and back to top button
         let lastScrollY = 0;
         const navbar = document.getElementById('navbar');
+        const backToTop = document.getElementById('backToTop');
 
-        window.addEventListener('scroll', () => {
+        function handleScroll() {
             const currentScrollY = window.scrollY;
             
             // Add scrolled class for styling
             if (currentScrollY > 100) {
                 navbar.classList.add('scrolled');
+                backToTop.classList.add('visible');
             } else {
                 navbar.classList.remove('scrolled');
+                backToTop.classList.remove('visible');
             }
 
-            // Auto-hide navbar on scroll down
-            if (currentScrollY > lastScrollY && currentScrollY > 200) {
-                navbar.style.transform = 'translateY(-100%)';
-            } else {
-                navbar.style.transform = 'translateY(0)';
+            // Auto-hide navbar on scroll down (except on mobile)
+            if (window.innerWidth > 768) {
+                if (currentScrollY > lastScrollY && currentScrollY > 200) {
+                    navbar.style.transform = 'translateY(-100%)';
+                } else {
+                    navbar.style.transform = 'translateY(0)';
+                }
             }
 
             lastScrollY = currentScrollY;
-        });
+        }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            updateLanguage();
-        });
-
-        // Parallax effect for background orbs
+        // Throttled scroll handler for performance
+        let scrollTimeout;
         window.addEventListener('scroll', () => {
+            if (scrollTimeout) {
+                cancelAnimationFrame(scrollTimeout);
+            }
+            scrollTimeout = requestAnimationFrame(handleScroll);
+        }, { passive: true });
+
+        // Parallax effect for background orbs (throttled for performance)
+        let parallaxTimeout;
+        function handleParallax() {
             const scrolled = window.pageYOffset;
             const orbs = document.querySelectorAll('.bg-orb');
             
@@ -1581,16 +1980,87 @@
                 const speed = 0.5 + (index * 0.1);
                 orb.style.transform = `translateY(${scrolled * speed}px)`;
             });
+        }
+
+        window.addEventListener('scroll', () => {
+            if (parallaxTimeout) {
+                cancelAnimationFrame(parallaxTimeout);
+            }
+            parallaxTimeout = requestAnimationFrame(handleParallax);
+        }, { passive: true });
+
+        // Performance optimizations
+        function hideLoadingSpinner() {
+            const spinner = document.getElementById('loadingSpinner');
+            spinner.style.opacity = '0';
+            setTimeout(() => {
+                spinner.style.display = 'none';
+            }, 500);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLanguage();
+            
+            // Hide loading spinner after content is loaded
+            setTimeout(hideLoadingSpinner, 1000);
+            
+            // Performance logging
+            const loadTime = Date.now() - performanceStart;
+            console.log(`Page loaded in ${loadTime}ms`);
+            
+            // Show welcome notification
+            setTimeout(() => {
+                const welcomeMessage = currentLang === 'lv' 
+                    ? 'Laipni lūdzam n8n.lv! Izpētiet nākotnes automatizācijas risinājumus.' 
+                    : 'Welcome to n8n.lv! Explore the future of automation solutions.';
+                showNotification(welcomeMessage);
+            }, 2000);
         });
 
-        // Add hover effects to cards
-        document.querySelectorAll('.floating-card, .feature-card, .tech-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = this.style.transform.replace('scale(1)', 'scale(1.02)');
-            });
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeMobileNav();
+                hideNotification();
+            }
+        });
+
+        // Close mobile nav when clicking outside
+        document.addEventListener('click', (e) => {
+            const mobileNav = document.getElementById('mobileNav');
+            const toggle = document.querySelector('.mobile-nav-toggle');
             
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = this.style.transform.replace('scale(1.02)', 'scale(1)');
+            if (mobileNav.classList.contains('active') && 
+                !mobileNav.contains(e.target) && 
+                !toggle.contains(e.target)) {
+                closeMobileNav();
+            }
+        });
+
+        // Prevent context menu on floating cards for better UX
+        document.querySelectorAll('.floating-card, .feature-card, .tech-card').forEach(card => {
+            card.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+            });
+        });
+
+        // Add loading states to buttons
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                if (this.href && this.href.includes('mailto:')) {
+                    return; // Let mailto links work normally
+                }
+                
+                if (!this.href.startsWith('#')) {
+                    e.preventDefault();
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ielādē...';
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 2000);
+                }
             });
         });
     </script>
